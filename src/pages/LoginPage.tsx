@@ -1,54 +1,57 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import {
-  Button, TextField, Container, Typography, Box,
-  createTheme, ThemeProvider, CssBaseline
-} from '@mui/material';
-import { AuthRequest } from '../types.ts';
+import { Button, TextField, Container, Typography, Box, Alert } from '@mui/material';
+import type { AuthRequest } from '../types.ts';
 
-// 1. Esquema de validação (igual ao backend)
+// Esquema de validação
 const loginSchema = z.object({
-  username: z.string().min(3, 'Utilizador deve ter no mínimo 3 caracteres').max(50),
-  password: z.string().min(1, 'Senha é obrigatória').max(255),
-});
-
-// 2. Tema escuro simples
-const darkTheme = createTheme({
-  palette: {
-    mode: 'dark',
-  },
+  username: z.string().min(3, 'O utilizador deve ter no mínimo 3 caracteres.').max(50),
+  password: z.string().min(1, 'A senha é obrigatória.').max(255),
 });
 
 export const LoginPage = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
+  const [loginError, setLoginError] = useState<string | null>(null);
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<AuthRequest>({
     resolver: zodResolver(loginSchema),
   });
 
   const onSubmit = async (data: AuthRequest) => {
     try {
+      setLoginError(null);
       await login(data);
       navigate('/dashboard');
     } catch (error) {
       console.error('Login failed:', error);
-      // Aqui você pode definir um erro de formulário para mostrar ao utilizador
+      setLoginError('Utilizador ou senha inválidos. Por favor, tente novamente.');
     }
   };
 
   return (
-    <ThemeProvider theme={darkTheme}>
-      <CssBaseline />
+    // A ESTRUTURA CORRETA - IGUAL À LANDINGPAGE
+    // Este Box é a chave: ele ocupa a tela inteira e centraliza o seu conteúdo.
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: '100%',
+        minHeight: '100vh', // Garante que ocupa a altura toda da tela
+      }}
+    >
       <Container component="main" maxWidth="xs">
-        <Box sx={{ marginTop: 8, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <Typography component="h1" variant="h5">
             Login
           </Typography>
-          <Box component="form" onSubmit={handleSubmit(onSubmit)} sx={{ mt: 3 }}>
+          <Box component="form" onSubmit={handleSubmit(onSubmit)} sx={{ mt: 3, width: '100%' }}>
+            {loginError && <Alert severity="error" sx={{ mb: 2 }}>{loginError}</Alert>}
             <TextField
               margin="normal"
               required
@@ -75,6 +78,6 @@ export const LoginPage = () => {
           </Box>
         </Box>
       </Container>
-    </ThemeProvider>
+    </Box>
   );
 };

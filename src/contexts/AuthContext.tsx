@@ -2,7 +2,7 @@
 import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
 import { jwtDecode } from 'jwt-decode';
 import apiService from "../api/ApiService.ts";
-import { AuthRequest } from '../types.ts';
+import type { AuthRequest } from '../types.ts';
 
 // Tipos de dados
 interface User {
