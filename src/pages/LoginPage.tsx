@@ -7,7 +7,6 @@ import { useNavigate } from 'react-router-dom';
 import { Button, TextField, Container, Typography, Box, Alert } from '@mui/material';
 import type { AuthRequest } from '../types.ts';
 
-// Esquema de validação
 const loginSchema = z.object({
   username: z.string().min(3, 'O utilizador deve ter no mínimo 3 caracteres.').max(50),
   password: z.string().min(1, 'A senha é obrigatória.').max(255),
@@ -33,16 +32,13 @@ export const LoginPage = () => {
   };
 
   return (
-    // A ESTRUTURA CORRETA - IGUAL À LANDINGPAGE
-    // Este Box é a chave: ele ocupa a tela inteira e centraliza o seu conteúdo.
     <Box
       sx={{
         display: 'flex',
-        flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
+        minHeight: '100vh',
         width: '100%',
-        minHeight: '100vh', // Garante que ocupa a altura toda da tela
       }}
     >
       <Container component="main" maxWidth="xs">

@@ -3,6 +3,7 @@ import React, { createContext, useState, useContext, useEffect, ReactNode } from
 import { jwtDecode } from 'jwt-decode';
 import apiService from "../api/ApiService.ts";
 import type { AuthRequest } from '../types.ts';
+import axios from 'axios';
 
 // Tipos de dados
 interface User {
@@ -39,15 +40,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const login = async (data: AuthRequest) => {
-    const response = await apiService.post('/auth/login', data);
+    const response = await axios.post('/api/auth/login', data, {
+      baseURL: '',
+    });
+
     const { token } = response.data;
     localStorage.setItem('authToken', token);
+    apiService.defaults.headers.common['Authorization'] = `Bearer ${token}`; // Atualiza o header do apiService para futuras requisições
     const decodedToken: { sub: string; roles: string[] } = jwtDecode(token);
     setUser({ username: decodedToken.sub, roles: decodedToken.roles });
   };
 
   const logout = () => {
     localStorage.removeItem('authToken');
+    delete apiService.defaults.headers.common['Authorization']; // Remove o header do apiService
     setUser(null);
   };
 

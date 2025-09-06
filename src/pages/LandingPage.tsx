@@ -107,7 +107,17 @@ export const LandingPage = () => {
   };
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', minHeight: '100vh', textAlign: 'center', py: 5 }}>
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        minHeight: '100vh',
+        width: '100%',
+        fontFamily: 'MinhaFonte, Roboto, sans-serif',
+      }}
+    >
       <Container maxWidth="lg">
         <Typography variant="h2" component="h1" gutterBottom fontWeight="bold" color="primary.main">
           Bem-vindo!
