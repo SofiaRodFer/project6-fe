@@ -1,7 +1,16 @@
-import { Box, Container, Typography, CircularProgress, Card, CardMedia, CardContent, Grid } from '@mui/material';
+import { Box, Container, Typography, CircularProgress, Card, CardMedia, CardContent, Grid, createTheme, ThemeProvider } from '@mui/material';
 import { useEffect, useState } from 'react';
 import apiService from '../api/ApiService';
 import type { TextContent, ImageContent } from '../types';
+
+const landingPageTheme = createTheme({
+  palette: {
+    mode: 'dark',
+  },
+  typography: {
+    fontFamily: ['SofiaHandwritten', 'Roboto', 'sans-serif'].join(','),
+  },
+});
 
 export const LandingPage = () => {
   const [texts, setTexts] = useState<TextContent[]>([]);
@@ -10,7 +19,6 @@ export const LandingPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // EFEITO 1: Busca a lista de textos e imagens da página
   useEffect(() => {
     const pageId = 1;
     const fetchContentMetadata = async () => {
@@ -18,10 +26,10 @@ export const LandingPage = () => {
         setLoading(true);
         const [textsResponse, imagesResponse] = await Promise.all([
           apiService.get(`/content/pages/${pageId}/texts`),
-          apiService.get(`/content/pages/${pageId}/images`) // A chamada que estava faltando
+          apiService.get(`/content/pages/${pageId}/images`)
         ]);
         setTexts(textsResponse.data);
-        setImages(imagesResponse.data); // Isso vai popular a lista e disparar o próximo useEffect
+        setImages(imagesResponse.data);
         setError(null);
       } catch (err) {
         console.error("Erro ao buscar metadados do conteúdo:", err);
@@ -31,12 +39,10 @@ export const LandingPage = () => {
       }
     };
     fetchContentMetadata();
-  }, []); // Roda apenas uma vez quando o componente é montado
+  }, []);
 
-  // EFEITO 2: Busca os dados de cada imagem da lista
   useEffect(() => {
     if (images.length === 0) return;
-
     const fetchImageBlobs = async () => {
       const urls: Record<string, string> = {};
       for (const image of images) {
@@ -52,26 +58,20 @@ export const LandingPage = () => {
       }
       setImageUrls(urls);
     };
-
     fetchImageBlobs();
-
     return () => {
       Object.values(imageUrls).forEach(URL.revokeObjectURL);
     };
-  }, [images]); // Roda sempre que a lista de 'images' for atualizada
+  }, [images]);
 
   const renderContent = () => {
-    if (loading) {
-      return <CircularProgress />;
-    }
-    if (error) {
-      return <Typography color="error">{error}</Typography>;
-    }
+    if (loading) return <CircularProgress />;
+    if (error) return <Typography color="error">{error}</Typography>;
 
     return (
       <>
         {texts.map((text) => (
-          <Box key={text.id} my={4}>
+          <Box key={text.id} my={4} sx={{ textAlign: 'center' }}>
             <Typography variant="h4" component="h2" gutterBottom>
               {text.identifierTag.replace(/_/g, ' ')}
             </Typography>
@@ -81,10 +81,9 @@ export const LandingPage = () => {
           </Box>
         ))}
 
-        <Grid container spacing={4} mt={4}>
+        <Grid container spacing={4} mt={4} justifyContent="center">
           {images.map((image) => (
-            // CORREÇÃO DO GRID: A sintaxe correta para a versão do MUI
-            <Grid key={image.id} xs={12} sm={6} md={4}>
+            <Grid item key={image.id} xs={12} sm={6} md={4}>
               <Card>
                 <CardMedia
                   component="img"
@@ -107,25 +106,27 @@ export const LandingPage = () => {
   };
 
   return (
-    <Box
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        minHeight: '100vh',
-        width: '100%',
-        fontFamily: 'MinhaFonte, Roboto, sans-serif',
-      }}
-    >
-      <Container maxWidth="lg">
-        <Typography variant="h2" component="h1" gutterBottom fontWeight="bold" color="primary.main">
-          Bem-vindo!
-        </Typography>
-        <Box mt={4}>
-          {renderContent()}
-        </Box>
-      </Container>
-    </Box>
+    <ThemeProvider theme={landingPageTheme}>
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'flex-start',
+          minHeight: '100vh',
+          width: '100%',
+          py: 5,
+        }}
+      >
+        <Container maxWidth="lg">
+          <Typography variant="h2" component="h1" gutterBottom fontWeight="bold" color="primary.main" textAlign="center">
+            Bem-vindo!
+          </Typography>
+          <Box mt={4}>
+            {renderContent()}
+          </Box>
+        </Container>
+      </Box>
+    </ThemeProvider>
   );
 };

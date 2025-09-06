@@ -1,9 +1,9 @@
-export type AuthRequest {
+export type AuthRequest = {
   username: string;
   password: string;
 }
 
-export type TextContent {
+export type TextContent = {
   id: number;
   identifierTag: string;
   content: string;
@@ -11,7 +11,7 @@ export type TextContent {
   pageId: number;
 }
 
-export type ImageContent {
+export type ImageContent = {
   id: number;
   identifierTag: string;
   altText: string;

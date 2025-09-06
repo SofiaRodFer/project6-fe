@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -26,7 +26,7 @@ export const LoginPage = () => {
       await login(data);
       navigate('/dashboard');
     } catch (error) {
-      console.error('Login failed:', error);
+      console.error('Login falhou:', error);
       setLoginError('Utilizador ou senha inválidos. Por favor, tente novamente.');
     }
   };
@@ -52,7 +52,7 @@ export const LoginPage = () => {
               margin="normal"
               required
               fullWidth
-              label="Utilizador"
+              label="username"
               autoFocus
               {...register('username')}
               error={!!errors.username}
@@ -62,14 +62,14 @@ export const LoginPage = () => {
               margin="normal"
               required
               fullWidth
-              label="Senha"
+              label="senha"
               type="password"
               {...register('password')}
               error={!!errors.password}
               helperText={errors.password?.message}
             />
             <Button type="submit" fullWidth variant="contained" disabled={isSubmitting} sx={{ mt: 3, mb: 2 }}>
-              {isSubmitting ? 'A entrar...' : 'Entrar'}
+              {isSubmitting ? 'Entrando...' : 'Entrar'}
             </Button>
           </Box>
         </Box>

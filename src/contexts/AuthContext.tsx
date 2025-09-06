@@ -1,5 +1,4 @@
-// src/contexts/AuthContext.tsx
-import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
+import { createContext, useState, useContext, useEffect, type ReactNode } from 'react';
 import { jwtDecode } from 'jwt-decode';
 import apiService from "../api/ApiService.ts";
 import type { AuthRequest } from '../types.ts';
@@ -18,15 +17,12 @@ interface AuthContextType {
   logout: () => void;
 }
 
-// Criar o Contexto
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// O Provedor do Contexto
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
-    // Tenta carregar o token do localStorage ao iniciar a app
     const token = localStorage.getItem('authToken');
     if (token) {
       try {
@@ -46,14 +42,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     const { token } = response.data;
     localStorage.setItem('authToken', token);
-    apiService.defaults.headers.common['Authorization'] = `Bearer ${token}`; // Atualiza o header do apiService para futuras requisições
+    apiService.defaults.headers.common['Authorization'] = `Bearer ${token}`;
     const decodedToken: { sub: string; roles: string[] } = jwtDecode(token);
     setUser({ username: decodedToken.sub, roles: decodedToken.roles });
   };
 
   const logout = () => {
     localStorage.removeItem('authToken');
-    delete apiService.defaults.headers.common['Authorization']; // Remove o header do apiService
+    delete apiService.defaults.headers.common['Authorization'];
     setUser(null);
   };
 
@@ -64,7 +60,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
-// Hook customizado para usar o contexto facilmente
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {

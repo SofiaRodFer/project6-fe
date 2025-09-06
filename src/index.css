@@ -1,6 +1,6 @@
 @font-face {
   font-family: 'SofiaHandwritten';
-  src: url('./assets/fonts/SofiaHandwritten-Regular.ttf') format('ttf');
+  src: url('/assets/fonts/SofiaHandwritten-Regular.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
 }
@@ -18,7 +18,6 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Garante que os elementos base ocupem a tela toda */
 html, body, #root {
   margin: 0;
   padding: 0;
